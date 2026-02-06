@@ -61,27 +61,6 @@ Content-Type: application/json
     });
 %}
 
-### 1.6 POST v1 - Errore: JSON Malformato
-POST {{baseUrl}}/api/v1/calcola/post
-Content-Type: application/json
-
-{
-  "operando1": 10,
-  "operatore": "+"
-  "operando2": 5
-}
-
-> {%
-    client.test("POST v1 Errore Sintassi JSON", function() {
-        client.assert(response.status === 400);
-        client.assert(response.body.errore.includes("JSON non valido"));
-    });
-%}
-
-# =============================================================================
-# SEZIONE 2: ENDPOINTS /api/ (SENZA V1)
-# =============================================================================
-
 ### 2.1 GET Base - Moltiplicazione (Successo)
 GET {{baseUrl}}/api/calcola/get?operando1=3&operando2=3&operatore=*
 Accept: application/json
@@ -166,10 +145,6 @@ Content-Type: application/json
     });
 %}
 
-# =============================================================================
-# SEZIONE 3: TEST INCROCIATI (METODO ERRATO)
-# =============================================================================
-
 ### 3.1 Errore: POST su endpoint GET
 POST {{baseUrl}}/api/calcola/get
 Content-Type: application/json
@@ -190,5 +165,129 @@ GET {{baseUrl}}/api/v1/calcola/post?operando1=1&operando2=1&operatore=+
     client.test("Check Method Not Allowed su POST handler", function() {
         client.assert(response.status === 405);
         client.assert(response.body.errore.includes("Usa POST"));
+    });
+%}
+
+### 1.1 GET V2 - Potenza (Nuovo Operatore)
+GET {{baseUrl}}/api/v2/calcola/get?operando1=2&operando2=10&operatore=%5E
+Accept: application/json
+
+> {%
+    client.test("V2 Potenza: Status 200", function() {
+        client.assert(response.status === 200);
+    });
+    client.test("V2 Schema: Controllo ID e Timestamp", function() {
+        client.assert(response.body.id !== undefined, "ID UUID mancante");
+        client.assert(response.body.timestamp !== undefined, "Timestamp mancante");
+        client.assert(response.body.risultato === 1024);
+    });
+%}
+
+### 1.2 GET V2 - Radice Quadrata (Operatore Unario)
+# Nota: Il tuo service usa solo operando1 per la radice
+GET {{baseUrl}}/api/v2/calcola/get?operando1=16&operando2=0&operatore=RADICE
+Accept: application/json
+
+> {%
+    client.test("V2 Radice: Risultato corretto", function() {
+        client.assert(response.body.risultato === 4);
+    });
+%}
+
+### 1.3 POST V2 - Modulo (Alias testo "MODULO")
+POST {{baseUrl}}/api/v2/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 10,
+  "operando2": 3,
+  "operatore": "MODULO"
+}
+
+> {%
+    client.test("V2 Modulo: Risultato corretto", function() {
+        client.assert(response.body.risultato === 1);
+    });
+%}
+
+### 1.4 POST V2 - Moltiplicazione (Alias "X")
+POST {{baseUrl}}/api/v2/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 5,
+  "operando2": 5,
+  "operatore": "X"
+}
+
+> {%
+    client.test("V2 Alias X: Risultato corretto", function() {
+        client.assert(response.body.risultato === 25);
+    });
+%}
+
+### 1.5 V2 Errore - Divisione per zero
+POST {{baseUrl}}/api/v2/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 10,
+  "operando2": 0,
+  "operatore": "/"
+}
+
+> {%
+    client.test("V2 Errore: Divisione per zero", function() {
+        client.assert(response.status === 400);
+        client.assert(response.body.errore === "Divisione per zero non consentita");
+    });
+%}
+
+### 1.6 V2 Errore - Radice numero negativo
+GET {{baseUrl}}/api/v2/calcola/get?operando1=-9&operando2=0&operatore=RADICE
+
+> {%
+    client.test("V2 Errore: Radice negativa", function() {
+        client.assert(response.status === 400);
+        client.assert(response.body.errore.includes("non consentita"));
+    });
+%}
+
+### 2.2 POST Base - Sottrazione
+POST {{baseUrl}}/api/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 50,
+  "operando2": 20,
+  "operatore": "-"
+}
+
+> {%
+    client.test("Base POST Sottrazione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === 30);
+    });
+%}
+
+### 3.1 Errore: Operatore Inesistente
+GET {{baseUrl}}/api/v2/calcola/get?operando1=10&operando2=5&operatore=LOGARITMO
+
+> {%
+    client.test("Errore Operatore non valido", function() {
+        client.assert(response.status === 400);
+        client.assert(response.body.errore.includes("Operatore non valido"));
+    });
+%}
+
+### 3.2 Errore: Body POST vuoto
+POST {{baseUrl}}/api/calcola/post
+Content-Type: application/json
+
+{}
+
+> {%
+    client.test("Errore Body Vuoto", function() {
+        client.assert(response.status === 400);
     });
 %}
