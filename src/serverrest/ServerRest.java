@@ -10,7 +10,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import serverrest.handlers.GetHandlerV1;
+import serverrest.handlers.GetHandlerV2;
 import serverrest.handlers.PostHandlerV1;
+import serverrest.handlers.PostHandlerV2;
 import serverrest.parser.OperazioneRequestV1;
 
 import java.io.IOException;
@@ -47,7 +49,8 @@ public class ServerRest {
             server.createContext("/api/v1/calcola/get", new GetHandlerV1());
 
             //V2
-            // TODO: implementare nuovi handler per la versione 2.0 se necessario
+            server.createContext("/api/v2/calcola/post", new PostHandlerV2());
+            server.createContext("/api/v2/calcola/get", new GetHandlerV2());
 
             // Endpoint di benvenuto
             server.createContext("/", ServerRest::gestisciBenvenuto);
@@ -96,6 +99,10 @@ public class ServerRest {
         Map endpoints = new HashMap<>();
         endpoints.put("POST", "/api/calcola/post");
         endpoints.put("GET", "/api/calcola/get?operando1=X&operando2=Y&operatore=OP");
+        endpoints.put("POST V1", "/api/v1/calcola/post");
+        endpoints.put("GET V1", "/api/v1/calcola/get?operando1=X&operando2=Y&operatore=OP");
+        endpoints.put("POST V2", "/api/v2/calcola/post");
+        endpoints.put("GET V2", "/api/v2/calcola/get?operando1=X&operando2=Y&operatore=OP");
         info.put("endpoints", endpoints);
         
         Map operatori = new HashMap<>();
