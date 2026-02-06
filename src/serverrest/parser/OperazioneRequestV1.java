@@ -2,23 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package serverrest;
+package serverrest.parser;
 
 /**
  *
  * @author delfo
  */
-public class OperazioneRequest {
+public class OperazioneRequestV1 {
     private double operando1;
     private double operando2;
     private String operatore;
     
     // Costruttore vuoto necessario per GSON
-    public OperazioneRequest() {
+    public OperazioneRequestV1() {
     }
     
     // Costruttore con parametri
-    public OperazioneRequest(double operando1, double operando2, String operatore) {
+    public OperazioneRequestV1(double operando1, double operando2, String operatore) {
         this.operando1 = operando1;
         this.operando2 = operando2;
         this.operatore = operatore;

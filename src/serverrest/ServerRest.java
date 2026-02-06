@@ -9,6 +9,9 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import serverrest.handlers.GetHandlerV1;
+import serverrest.handlers.PostHandlerV1;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -34,9 +37,17 @@ public class ServerRest {
             HttpServer server = HttpServer.create(new InetSocketAddress(porta), 0);
             
             // Registra gli handler per gli endpoint
-            server.createContext("/api/calcola/post", new PostHandler());
-            server.createContext("/api/calcola/get", new GetHandler());
-            
+            //Legacy
+            server.createContext("/api/calcola/post", new PostHandlerV1());
+            server.createContext("/api/calcola/get", new GetHandlerV1());
+
+            //V1
+            server.createContext("/api/v1/calcola/post", new PostHandlerV1());
+            server.createContext("/api/v1/calcola/get", new GetHandlerV1());
+
+            //V2
+            // TODO: implementare nuovi handler per la versione 2.0 se necessario
+
             // Endpoint di benvenuto
             server.createContext("/", ServerRest::gestisciBenvenuto);
             

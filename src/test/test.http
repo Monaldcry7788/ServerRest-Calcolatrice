@@ -1,0 +1,194 @@
+### Configurazione Variabile Globale
+@baseUrl = http://localhost:8080
+
+# =============================================================================
+# SEZIONE 1: ENDPOINTS /api/v1/ (VERSIONATI)
+# =============================================================================
+
+### 1.2 GET v1 - Sottrazione (Successo)
+GET {{baseUrl}}/api/v1/calcola/get?operando1=20&operando2=8&operatore=-
+Accept: application/json
+
+> {%
+    client.test("GET v1 Sottrazione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === 12);
+    });
+%}
+
+### 1.3 GET v1 - Errore: Operandi non numerici
+GET {{baseUrl}}/api/v1/calcola/get?operando1=TEST&operando2=5&operatore=*
+Accept: application/json
+
+> {%
+    client.test("GET v1 Errore Formato", function() {
+        client.assert(response.status === 400);
+        client.assert(response.body.errore.includes("numeri"));
+    });
+%}
+
+### 1.4 POST v1 - Moltiplicazione (Successo)
+POST {{baseUrl}}/api/v1/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 6,
+  "operando2": 7,
+  "operatore": "*"
+}
+
+> {%
+    client.test("POST v1 Moltiplicazione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === 42);
+    });
+%}
+
+### 1.5 POST v1 - Divisione (Successo)
+POST {{baseUrl}}/api/v1/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 100,
+  "operando2": 4,
+  "operatore": "/"
+}
+
+> {%
+    client.test("POST v1 Divisione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === 25);
+    });
+%}
+
+### 1.6 POST v1 - Errore: JSON Malformato
+POST {{baseUrl}}/api/v1/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 10,
+  "operatore": "+"
+  "operando2": 5
+}
+
+> {%
+    client.test("POST v1 Errore Sintassi JSON", function() {
+        client.assert(response.status === 400);
+        client.assert(response.body.errore.includes("JSON non valido"));
+    });
+%}
+
+# =============================================================================
+# SEZIONE 2: ENDPOINTS /api/ (SENZA V1)
+# =============================================================================
+
+### 2.1 GET Base - Moltiplicazione (Successo)
+GET {{baseUrl}}/api/calcola/get?operando1=3&operando2=3&operatore=*
+Accept: application/json
+
+> {%
+    client.test("GET Base Moltiplicazione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === 9);
+    });
+%}
+
+### 2.2 GET Base - Divisione (Successo)
+GET {{baseUrl}}/api/calcola/get?operando1=50&operando2=2&operatore=/
+Accept: application/json
+
+> {%
+    client.test("GET Base Divisione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === 25);
+    });
+%}
+
+### 2.3 GET Base - Errore: Parametri Mancanti
+GET {{baseUrl}}/api/calcola/get?operando1=10
+Accept: application/json
+
+> {%
+    client.test("GET Base Parametri Mancanti", function() {
+        client.assert(response.status === 400);
+        client.assert(response.body.errore.includes("Parametri mancanti"));
+    });
+%}
+
+### 2.4 POST Base - Addizione (Successo)
+POST {{baseUrl}}/api/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 100.50,
+  "operando2": 200.50,
+  "operatore": "+"
+}
+
+> {%
+    client.test("POST Base Addizione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === 301);
+    });
+%}
+
+### 2.5 POST Base - Sottrazione (Successo)
+POST {{baseUrl}}/api/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 50,
+  "operando2": 100,
+  "operatore": "-"
+}
+
+> {%
+    client.test("POST Base Sottrazione", function() {
+        client.assert(response.status === 200);
+        client.assert(response.body.risultato === -50);
+    });
+%}
+
+### 2.6 POST Base - Errore: Operatore Vuoto
+POST {{baseUrl}}/api/calcola/post
+Content-Type: application/json
+
+{
+  "operando1": 10,
+  "operando2": 10,
+  "operatore": ""
+}
+
+> {%
+    client.test("POST Base Errore Operatore", function() {
+        client.assert(response.status === 400);
+        client.assert(response.body.errore === "Operatore mancante o vuoto");
+    });
+%}
+
+# =============================================================================
+# SEZIONE 3: TEST INCROCIATI (METODO ERRATO)
+# =============================================================================
+
+### 3.1 Errore: POST su endpoint GET
+POST {{baseUrl}}/api/calcola/get
+Content-Type: application/json
+
+{}
+
+> {%
+    client.test("Check Method Not Allowed su GET handler", function() {
+        client.assert(response.status === 405);
+        client.assert(response.body.errore.includes("Usa GET"));
+    });
+%}
+
+### 3.2 Errore: GET su endpoint POST
+GET {{baseUrl}}/api/v1/calcola/post?operando1=1&operando2=1&operatore=+
+
+> {%
+    client.test("Check Method Not Allowed su POST handler", function() {
+        client.assert(response.status === 405);
+        client.assert(response.body.errore.includes("Usa POST"));
+    });
+%}
