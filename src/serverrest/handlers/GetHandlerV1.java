@@ -9,7 +9,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import serverrest.CalcolatriceService;
+import serverrest.CalcolatriceServiceV1;
 import serverrest.parser.OperazioneResponseV1;
 
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class GetHandlerV1 implements HttpHandler {
             String operatore = parametri.get("operatore");
             
             // Esegue il calcolo
-            double risultato = CalcolatriceService.calcola(operando1, operando2, operatore);
+            double risultato = CalcolatriceServiceV1.calcola(operando1, operando2, operatore);
             
             // Crea l'oggetto risposta
             OperazioneResponseV1 response = new OperazioneResponseV1(

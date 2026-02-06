@@ -10,7 +10,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import serverrest.CalcolatriceService;
+import serverrest.CalcolatriceServiceV1;
 import serverrest.parser.OperazioneRequestV1;
 import serverrest.parser.OperazioneResponseV1;
 
@@ -68,7 +68,7 @@ public class PostHandlerV1 implements HttpHandler {
             }
             
             // Esegue il calcolo
-            double risultato = CalcolatriceService.calcola(
+            double risultato = CalcolatriceServiceV1.calcola(
                 request.getOperando1(),
                 request.getOperando2(),
                 request.getOperatore()
