@@ -49,7 +49,20 @@ public class CalcolatriceServiceV1 {
                     throw new IllegalArgumentException("Divisione per zero non consentita");
                 }
                 return operando1 / operando2;
-                
+            case "POTENZA":
+            case "^":
+                return Math.pow(operando1, operando2);
+            case "RADICE":
+                if (operando1 < 0) {
+                    throw new IllegalArgumentException("Radice quadrata di numero negativo non consentita");
+                }
+                return Math.sqrt(operando1);
+            case "MODULO":
+            case "%":
+                if (operando2 == 0) {
+                    throw new IllegalArgumentException("Modulo per zero non consentito");
+                }
+                return operando1 % operando2;
             default:
                 throw new IllegalArgumentException(
                     "Operatore non valido: " + operatore + 

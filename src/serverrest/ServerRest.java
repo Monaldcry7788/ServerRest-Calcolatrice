@@ -11,13 +11,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import serverrest.handlers.GetHandlerV1;
 import serverrest.handlers.PostHandlerV1;
+import serverrest.parser.OperazioneRequestV1;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
-
-
 
 /**
  * Server REST per la calcolatrice
@@ -25,6 +24,8 @@ import java.util.Map;
  * @author delfo
  */
 public class ServerRest {
+
+    public static HashMap<String, OperazioneRequestV1> operazioni = new HashMap<>();
 
     /**
      * Avvia il server REST sulla porta specificata
