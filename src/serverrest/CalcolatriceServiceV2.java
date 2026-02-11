@@ -19,8 +19,7 @@ public class CalcolatriceServiceV2 {
      * @return Il risultato dell'operazione
      * @throws IllegalArgumentException se l'operatore non è valido o divisione per zero
      */
-    public static double calcola(double operando1, double operando2, String operatore) 
-            throws IllegalArgumentException {
+    public static double calcola(double operando1, double operando2, String operatore) throws IllegalArgumentException {
         
         if (operatore == null || operatore.trim().isEmpty()) {
             throw new IllegalArgumentException("Operatore non può essere vuoto");

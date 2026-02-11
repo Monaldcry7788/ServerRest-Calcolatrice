@@ -68,6 +68,10 @@ public class ServerRest {
             System.out.println("Endpoint disponibili:");
             System.out.println("  - POST: http://localhost:" + porta + "/api/calcola/post");
             System.out.println("  - GET:  http://localhost:" + porta + "/api/calcola/get");
+            System.out.println("  - POST V1: http://localhost:" + porta + "/api/v1/calcola/post");
+            System.out.println("  - GET V1:  http://localhost:" + porta + "/api/v1/calcola/get");
+            System.out.println("  - POST V2: http://localhost:" + porta + "/api/v2/calcola/post");
+            System.out.println("  - GET V2:  http://localhost:" + porta + "/api/v2/calcola/get");
             System.out.println("  - Info: http://localhost:" + porta + "/");
             System.out.println();
             System.out.println("Operatori supportati:");
