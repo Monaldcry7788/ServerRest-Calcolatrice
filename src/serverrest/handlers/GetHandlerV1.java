@@ -24,14 +24,21 @@ import java.util.Map;
  */
 public class GetHandlerV1 implements HttpHandler {
 
+    public GetHandlerV1() {
+        this.service = new CalcolatriceServiceV1();
+    }
+
     // Istanza Gson configurata per pretty printing
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
-    
+
+
+    public CalcolatriceServiceV1 service;
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        
+
         // Verifica che sia una richiesta GET
         if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
             inviaErrore(exchange, 405, "Metodo non consentito. Usa GET");
@@ -57,7 +64,7 @@ public class GetHandlerV1 implements HttpHandler {
             String operatore = parametri.get("operatore");
             
             // Esegue il calcolo
-            double risultato = CalcolatriceServiceV1.calcola(operando1, operando2, operatore);
+            double risultato = service.calcola(operando1, operando2, operatore);
             
             // Crea l'oggetto risposta
             OperazioneResponseV1 response = new OperazioneResponseV1(
@@ -111,7 +118,7 @@ public class GetHandlerV1 implements HttpHandler {
     /**
      * Invia una risposta di successo
      */
-    private void inviaRisposta(HttpExchange exchange, int codice, String jsonRisposta) 
+    public boolean inviaRisposta(HttpExchange exchange, int codice, String jsonRisposta)
             throws IOException {
         
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
@@ -123,6 +130,7 @@ public class GetHandlerV1 implements HttpHandler {
         OutputStream os = exchange.getResponseBody();
         os.write(bytes);
         os.close();
+        return codice >= 200 && codice < 300;
     }
     
     /**

@@ -8,8 +8,8 @@ package serverrest;
  *
  * @author delfo
  */
-public class CalcolatriceServiceV2 {
-    
+public class CalcolatriceServiceV2 extends CalcolatriceServiceV1 {
+
     /**
      * Esegue l'operazione matematica richiesta
      * 
@@ -19,7 +19,8 @@ public class CalcolatriceServiceV2 {
      * @return Il risultato dell'operazione
      * @throws IllegalArgumentException se l'operatore non è valido o divisione per zero
      */
-    public static double calcola(double operando1, double operando2, String operatore) throws IllegalArgumentException {
+    @Override
+    public double calcola(double operando1, double operando2, String operatore) throws IllegalArgumentException {
         
         if (operatore == null || operatore.trim().isEmpty()) {
             throw new IllegalArgumentException("Operatore non può essere vuoto");
@@ -29,25 +30,6 @@ public class CalcolatriceServiceV2 {
         String op = operatore.toUpperCase().trim();
 
         switch (op) {
-            case "SOMMA":
-            case "+":
-                return operando1 + operando2;
-
-            case "SOTTRAZIONE":
-            case "-":
-                return operando1 - operando2;
-
-            case "MOLTIPLICAZIONE":
-            case "*":
-            case "X":
-                return operando1 * operando2;
-
-            case "DIVISIONE":
-            case "/":
-                if (operando2 == 0) {
-                    throw new IllegalArgumentException("Divisione per zero non consentita");
-                }
-                return operando1 / operando2;
             case "POTENZA":
             case "^":
                 return Math.pow(operando1, operando2);
@@ -63,10 +45,7 @@ public class CalcolatriceServiceV2 {
                 }
                 return operando1 % operando2;
             default:
-                throw new IllegalArgumentException(
-                    "Operatore non valido: " + operatore +
-                    ". Operatori consentiti: SOMMA, SOTTRAZIONE, MOLTIPLICAZIONE, DIVISIONE"
-                );
+                return super.calcola(operando1, operando2, operatore);
         }
     }
 }
