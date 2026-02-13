@@ -28,6 +28,8 @@ public class GetHandlerV1 implements HttpHandler {
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
+
+    private final CalcolatriceServiceV1 calcolatriceService = new CalcolatriceServiceV1();
     
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -57,7 +59,7 @@ public class GetHandlerV1 implements HttpHandler {
             String operatore = parametri.get("operatore");
             
             // Esegue il calcolo
-            double risultato = CalcolatriceServiceV1.calcola(operando1, operando2, operatore);
+            double risultato = calcolatriceService.calcola(operando1, operando2, operatore);
             
             // Crea l'oggetto risposta
             OperazioneResponseV1 response = new OperazioneResponseV1(
