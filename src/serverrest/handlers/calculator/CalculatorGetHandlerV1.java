@@ -7,8 +7,9 @@ package serverrest.handlers.calculator;
 
 import com.sun.net.httpserver.HttpExchange;
 import serverrest.CalcolatriceServiceV1;
-import serverrest.parser.OperazioneRequestV1;
-import serverrest.parser.OperazioneResponseV1;
+import serverrest.Extensions;
+import serverrest.parser.calculator.OperazioneRequestV1;
+import serverrest.parser.calculator.OperazioneResponseV1;
 
 import java.io.IOException;
 /**
@@ -26,6 +27,6 @@ public class CalculatorGetHandlerV1 extends BaseCalculatorGetHandler {
 
     @Override
     protected void elabora(HttpExchange exchange, OperazioneRequestV1 request, OperazioneResponseV1 response) throws IOException {
-        super.inviaRisposta(exchange, 200, gson.toJson(response));
+        Extensions.inviaRisposta(exchange, 200, gson.toJson(response));
     }
 }

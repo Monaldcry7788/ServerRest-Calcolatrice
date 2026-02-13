@@ -1,4 +1,4 @@
-package serverrest.parser;
+package serverrest.parser.calculator;
 
 import java.sql.Timestamp;
 import java.util.UUID;

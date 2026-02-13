@@ -9,15 +9,19 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import serverrest.enums.VersionType;
 import serverrest.handlers.calculator.CalculatorGetHandlerV1;
 import serverrest.handlers.calculator.CalculatorGetHandlerV2;
 import serverrest.handlers.calculator.CalculatorPostHandlerV1;
 import serverrest.handlers.calculator.CalculatorPostHandlerV2;
-import serverrest.parser.OperazioneRequestV1;
+import serverrest.parser.VersionParser;
+import serverrest.parser.calculator.OperazioneRequestV1;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -28,6 +32,7 @@ import java.util.Map;
 public class ServerRest {
 
     public static HashMap<String, OperazioneRequestV1> operazioni = new HashMap<>();
+    public static HashSet<VersionParser> versioni = new HashSet<>();
 
     /**
      * Avvia il server REST sulla porta specificata
@@ -43,14 +48,23 @@ public class ServerRest {
             //Legacy
             server.createContext("/api/calcola/post", new CalculatorPostHandlerV1());
             server.createContext("/api/calcola/get", new CalculatorGetHandlerV1());
+            versioni.add(new VersionParser("legacy", VersionType.PhasedOut, new Date(2026, 2, 28)));
 
             //V1
             server.createContext("/api/v1/calcola/post", new CalculatorPostHandlerV1());
             server.createContext("/api/v1/calcola/get", new CalculatorGetHandlerV1());
+            versioni.add(new VersionParser("v1", VersionType.Active, null));
 
             //V2
             server.createContext("/api/v2/calcola/post", new CalculatorPostHandlerV2());
             server.createContext("/api/v2/calcola/get", new CalculatorGetHandlerV2());
+            versioni.add(new VersionParser("v2", VersionType.Active, null));
+
+            //V3
+
+            versioni.add(new VersionParser("v3", VersionType.Current, null));
+
+
 
             // Endpoint di benvenuto
             server.createContext("/", ServerRest::gestisciBenvenuto);
