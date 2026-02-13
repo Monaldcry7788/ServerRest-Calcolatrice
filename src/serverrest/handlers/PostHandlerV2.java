@@ -32,103 +32,19 @@ import java.util.Map;
  */
 
 
-public class PostHandlerV2 implements HttpHandler {
-    
-    // Istanza Gson configurata per pretty printing
-    private final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .create();
+public class PostHandlerV2 extends BaseCalculatorPostHandler {
 
-    private final CalcolatriceServiceV2 calcolatriceService = new CalcolatriceServiceV2();
-    
+    private final CalcolatriceServiceV1 calcolatriceService = new CalcolatriceServiceV2();
+
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        
-        // Verifica che sia una richiesta POST
-        if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
-            inviaErrore(exchange, 405, "Metodo non consentito. Usa POST");
-            return;
-        }
-        
-        try {
-            // Legge il body della richiesta
-            BufferedReader reader = new BufferedReader(
-                new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)
-            );
-            
-            // GSON converte automaticamente il JSON in oggetto Java
-            OperazioneRequestV1 request = gson.fromJson(reader, OperazioneRequestV1.class);
-            reader.close();
-            
-            // Validazione
-            if (request == null) {
-                inviaErrore(exchange, 400, "Body della richiesta vuoto o non valido");
-                return;
-            }
-            
-            if (request.getOperatore() == null || request.getOperatore().trim().isEmpty()) {
-                inviaErrore(exchange, 400, "Operatore mancante o vuoto");
-                return;
-            }
-            
-            // Esegue il calcolo
-            double risultato = calcolatriceService.calcola(
-                request.getOperando1(),
-                request.getOperando2(),
-                request.getOperatore()
-            );
-            
-            // Crea l'oggetto risposta
-            OperazioneResponseV2 response = new OperazioneResponseV2(
-                request.getOperando1(),
-                request.getOperando2(),
-                request.getOperatore(),
-                risultato
-            );
-            
-            // GSON converte automaticamente l'oggetto Java in JSON
-            String jsonRisposta = gson.toJson(response);
+    protected CalcolatriceServiceV1 getCalcolatriceService() {
+        return calcolatriceService;
+    }
 
-            ServerRest.operazioni.put(response.getId(), request);
-            inviaRisposta(exchange, 200, jsonRisposta);
-            
-        } catch (JsonSyntaxException e) {
-            inviaErrore(exchange, 400, "JSON non valido: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            inviaErrore(exchange, 400, e.getMessage());
-        } catch (Exception e) {
-            inviaErrore(exchange, 500, "Errore interno del server: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Invia una risposta di successo
-     */
-    private void inviaRisposta(HttpExchange exchange, int codice, String jsonRisposta) 
-            throws IOException {
-        
-        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-        exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-        
-        byte[] bytes = jsonRisposta.getBytes(StandardCharsets.UTF_8);
-        exchange.sendResponseHeaders(codice, bytes.length);
-        
-        OutputStream os = exchange.getResponseBody();
-        os.write(bytes);
-        os.close();
-    }
-    
-    /**
-     * Invia una risposta di errore in formato JSON
-     */
-    private void inviaErrore(HttpExchange exchange, int codice, String messaggio) 
-            throws IOException {
-        
-        Map errore = new HashMap<>();
-        errore.put("errore", messaggio);
-        errore.put("status", codice);
-        
-        String jsonErrore = gson.toJson(errore);
-        inviaRisposta(exchange, codice, jsonErrore);
+     @Override
+    protected void elabora(HttpExchange exchange, OperazioneRequestV1 request, OperazioneResponseV1 response) throws IOException {
+        OperazioneResponseV2 responseV2 = new OperazioneResponseV2(response.getOperando1(), response.getOperando2(), response.getOperazione(), response.getRisultato());
+        ServerRest.operazioni.put(responseV2.getId(), request);
+        super.inviaRisposta(exchange, 200, gson.toJson(response));
     }
 }
