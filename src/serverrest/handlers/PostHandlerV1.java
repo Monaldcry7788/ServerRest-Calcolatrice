@@ -36,6 +36,8 @@ public class PostHandlerV1 implements HttpHandler {
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
+
+    private final CalcolatriceServiceV1 calcolatriceService = new CalcolatriceServiceV1();
     
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -68,7 +70,7 @@ public class PostHandlerV1 implements HttpHandler {
             }
             
             // Esegue il calcolo
-            double risultato = CalcolatriceServiceV1.calcola(
+            double risultato = calcolatriceService.calcola(
                 request.getOperando1(),
                 request.getOperando2(),
                 request.getOperatore()
