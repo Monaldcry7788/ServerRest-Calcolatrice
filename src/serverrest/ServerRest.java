@@ -9,10 +9,10 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import serverrest.handlers.GetHandlerV1;
-import serverrest.handlers.GetHandlerV2;
-import serverrest.handlers.PostHandlerV1;
-import serverrest.handlers.PostHandlerV2;
+import serverrest.handlers.calculator.CalculatorGetHandlerV1;
+import serverrest.handlers.calculator.CalculatorGetHandlerV2;
+import serverrest.handlers.calculator.CalculatorPostHandlerV1;
+import serverrest.handlers.calculator.CalculatorPostHandlerV2;
 import serverrest.parser.OperazioneRequestV1;
 
 import java.io.IOException;
@@ -41,16 +41,16 @@ public class ServerRest {
             
             // Registra gli handler per gli endpoint
             //Legacy
-            server.createContext("/api/calcola/post", new PostHandlerV1());
-            server.createContext("/api/calcola/get", new GetHandlerV1());
+            server.createContext("/api/calcola/post", new CalculatorPostHandlerV1());
+            server.createContext("/api/calcola/get", new CalculatorGetHandlerV1());
 
             //V1
-            server.createContext("/api/v1/calcola/post", new PostHandlerV1());
-            server.createContext("/api/v1/calcola/get", new GetHandlerV1());
+            server.createContext("/api/v1/calcola/post", new CalculatorPostHandlerV1());
+            server.createContext("/api/v1/calcola/get", new CalculatorGetHandlerV1());
 
             //V2
-            server.createContext("/api/v2/calcola/post", new PostHandlerV2());
-            server.createContext("/api/v2/calcola/get", new GetHandlerV2());
+            server.createContext("/api/v2/calcola/post", new CalculatorPostHandlerV2());
+            server.createContext("/api/v2/calcola/get", new CalculatorGetHandlerV2());
 
             // Endpoint di benvenuto
             server.createContext("/", ServerRest::gestisciBenvenuto);
